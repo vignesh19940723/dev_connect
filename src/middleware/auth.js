@@ -1,12 +1,10 @@
  const adminAuth = (req,res,next)=>{
-  const token = req.body?.xyz
-    console.log('middleware here');
+  const token = req.body?.xyz;
       if( token === 'xyz'){
         next();
       }else{
         res.status(401).send('Unauthorized');
       }
-    
   };
 
   module.exports = {adminAuth};

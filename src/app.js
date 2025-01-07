@@ -1,42 +1,38 @@
 const express = require('express');
+const connectDB = require('./utils/database')
 const {adminAuth} = require('./middleware/auth');
 const app = express();
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const User = require('./models/user.schema');
 const port = 9999;
-
-
 app.use(bodyParser.json());
 
+//API signup user
+app.post('/signup',async (req,res) =>{
+  const user = new User({
+    firstName: 'Virat',
+    lastName:"Kholi",
+    email:"vtrat@gmail.com",
+    skills:["angular","node"],
+    password: 'virat@23'
+    
+  })
 
-
-app.post('/login', (req, res) => {
   try{
-    const {username,password} = req.body;
-    if(username === 'admin' && password === 'admin'){
-      res.send('Login Success');
-    }else{
-      res.status(401).send('Login Failed');
-    }
+    await user.save();
+    res.send('user added successfully')
   }catch(e){
-    res.status(500).send(e)
+    res.status(500).send('error while adding user')
   }
-});
 
-app.get('/profile',adminAuth,(req, res) => {
-  try{
-    res.send('First Node.js API with Express');
-  }catch(e){
-    res.status(500).send(e)
-  }
-});
+})
 
-app.use('/',(err,req,res,next)=>{
-  if(err){
-    res.status(500).send('Internal Server Error');
-  }
-});
+connectDB().then(() =>{
+  console.log("Database connection succesfull");
+  app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+  });
+}).catch((e)=>{
+  console.log("Error while connecting to DB")
+})
 
-
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
